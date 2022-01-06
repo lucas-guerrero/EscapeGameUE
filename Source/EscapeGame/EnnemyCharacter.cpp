@@ -8,6 +8,7 @@
 #include <Kismet/KismetMathLibrary.h>
 #include <Kismet/GameplayStatics.h>
 #include "PatateProjectil.h"
+#include <GameFramework/ProjectileMovementComponent.h>
 
 // Sets default values
 AEnnemyCharacter::AEnnemyCharacter()
@@ -34,7 +35,11 @@ void AEnnemyCharacter::ThrowPatate()
 	float SpawnDistance = 40.f;
 	FVector SpawnLocation = GetActorLocation() + (ForwardVector * SpawnDistance);
 
-	GetWorld()->SpawnActor<APatateProjectil>(PatateClass, SpawnLocation, GetActorRotation());
+	FTransform SpawnTransform(GetActorRotation(), SpawnLocation);
+	APatateProjectil* Patate = GetWorld()->SpawnActorDeferred<APatateProjectil>(PatateClass, SpawnTransform);
+
+	Patate->GetProjectileMouvementComponent()->InitialSpeed = 2200.f;
+	Patate->FinishSpawning(SpawnTransform);
 }
 
 // Called every frame
