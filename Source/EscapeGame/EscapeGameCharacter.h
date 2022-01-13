@@ -4,12 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "HealInterface.h"
 #include "EscapeGameCharacter.generated.h"
 
 UCLASS(config=Game)
-class AEscapeGameCharacter : public ACharacter
+class AEscapeGameCharacter : public ACharacter, public IHealInterface
 {
 	GENERATED_BODY()
+
+	class UHealthComponent* HealComponent;
 
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -28,6 +31,9 @@ public:
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
+
+	virtual void OnDeath_Implementation() override;
+	virtual void OnTakeDemage_Implementation() override;
 
 protected:
 

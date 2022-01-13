@@ -19,6 +19,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Patate, meta = (AllowPrivateAccess = "true"));
 	class UProjectileMovementComponent* ProjectileMouvement;
+
+	UPROPERTY(EditDefaultsOnly, Category = Patate)
+	float Attack = 25.f;
 	
 public:	
 	// Sets default values for this actor's properties

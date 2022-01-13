@@ -2,6 +2,8 @@
 
 
 #include "EnnemyCharacter.h"
+#include "EscapeFunction.h"
+#include "LookAtActorComponent.h"
 
 #include <TimerManager.h>
 #include <DrawDebugHelpers.h>
@@ -16,19 +18,21 @@ AEnnemyCharacter::AEnnemyCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
-	SightSource = CreateDefaultSubobject<USceneComponent>(TEXT("Sight Source"));
-	SightSource->SetupAttachment(RootComponent);
+	LookAtActorComponent = CreateDefaultSubobject<ULookAtActorComponent>(TEXT("Sight Source"));
+	LookAtActorComponent->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
 void AEnnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
+	LookAtActorComponent->SetTarget(PlayerCharacter);
 }
 
 void AEnnemyCharacter::ThrowPatate()
 {
-	// GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, TEXT("Patate !!"));
 	if (PatateClass == nullptr) return;
 
 	FVector ForwardVector = GetActorForwardVector();
@@ -46,11 +50,9 @@ void AEnnemyCharacter::ThrowPatate()
 void AEnnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
 	
 	// wheter the enemy could see the player
-	bCanSeePlayer = LookAtActor(PlayerCharacter);
+	bCanSeePlayer = LookAtActorComponent->CanSeeActor();
 
 	if (bCanSeePlayer != bPreviousCanSeePlayer)
 	{
@@ -75,54 +77,5 @@ void AEnnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-}
-
-bool AEnnemyCharacter::LookAtActor(AActor* TargetActor)
-{
-	if (TargetActor == nullptr) return false;
-
-	if(CanSeeActor(TargetActor))
-	{
-		FVector Start = SightSource->GetComponentLocation();
-		FVector End = TargetActor->GetActorLocation();
-		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(Start, End);
-
-		LookAtRotation.Pitch = 0;
-		LookAtRotation.Roll = 0;
-
-		// Set the rotation
-		SetActorRotation(LookAtRotation);
-		return true;
-	}
-
-	return false;
-}
-
-bool AEnnemyCharacter::CanSeeActor(const AActor* TargetActor) const
-{
-	if (TargetActor == nullptr) return false;
-
-	// Store the result of the line trace
-	FHitResult Hit;
-
-	// the line
-	FVector Start = SightSource->GetComponentLocation();
-	FVector End = TargetActor->GetActorLocation();
-
-	// Param
-	FCollisionQueryParams QueryParam;
-	QueryParam.AddIgnoredActor(this);
-	QueryParam.AddIgnoredActor(TargetActor);
-
-	// the trace channel we want to compage against
-	ECollisionChannel Channel = ECollisionChannel::ECC_GameTraceChannel1;
-
-	// Execute the line trace
-	GetWorld()->LineTraceSingleByChannel(Hit, Start, End, Channel, QueryParam);
-
-	// Show the trace line
-	if(!Hit.bBlockingHit) DrawDebugLine(GetWorld(), Start, End, FColor::Red);
-
-	return !Hit.bBlockingHit;
 }
 

@@ -2,6 +2,9 @@
 
 
 #include "PatateProjectil.h"
+#include "HealthComponent.h"
+#include "EscapeGameCharacter.h"
+
 #include <Components/SphereComponent.h>
 #include <EscapeGame/EscapeGameCharacter.h>
 #include <GameFramework/ProjectileMovementComponent.h>
@@ -25,7 +28,14 @@ APatateProjectil::APatateProjectil()
 
 void APatateProjectil::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& hit)
 {
-	if (Cast<AEscapeGameCharacter>(OtherActor) != nullptr) Destroy();
+	AEscapeGameCharacter* Player = Cast<AEscapeGameCharacter>(OtherActor);
+	if (Player != nullptr)
+	{
+		UHealthComponent *HealthComponent = Player->FindComponentByClass<UHealthComponent>();
+
+		HealthComponent->LoseHealth(Attack);
+		Destroy();
+	}
 }
 
 // Called when the game starts or when spawned

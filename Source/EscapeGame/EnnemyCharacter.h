@@ -24,7 +24,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = LookAt, meta = (AllowPrivateAccess = "true"));
-	USceneComponent* SightSource;
+	class ULookAtActorComponent* LookAtActorComponent;
 
 	FTimerHandle ThrowTimerHandle;
 
@@ -38,12 +38,6 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	// Change the rotation of the character
-	bool LookAtActor(AActor* TargetActor);
-
-	// Can we see the given actor
-	bool CanSeeActor(const AActor* TargetActor) const;
 
 	// the class used to spawn a patate object
 	UPROPERTY(EditDefaultsOnly, BluePrintReadOnly, Category = Patate)
