@@ -11,7 +11,6 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
-#include <Kismet/KismetSystemLibrary.h>
 
 //////////////////////////////////////////////////////////////////////////
 // AEscapeGameCharacter

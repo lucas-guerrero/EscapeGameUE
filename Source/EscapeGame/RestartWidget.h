@@ -18,9 +18,15 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* RestartButton;
 
+	UPROPERTY(meta = (BindWidget))
+	class UButton* QuitButton;
+
 	virtual void NativeOnInitialized();
 
 protected:
 	UFUNCTION()
 	void OnRestartCkick();
+
+	UFUNCTION()
+	void OnQuitCkick();
 };

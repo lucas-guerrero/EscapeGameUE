@@ -34,6 +34,8 @@ void AEscapeGamePlayerController::ShowRestartWidget()
 		bShowMouseCursor = true;
 		RestartWidget = CreateWidget<URestartWidget>(this, BP_RestartWidget);
 		RestartWidget->AddToViewport();
+
+		if (BP_LifeWidget != nullptr) { LifeWidget->RemoveFromParent(); }
 	}
 }
 
@@ -47,5 +49,7 @@ void AEscapeGamePlayerController::HideRestartWidget()
 		SetPause(false);
 		SetInputMode(FInputModeGameOnly());
 		bShowMouseCursor = false;
+
+		if (BP_LifeWidget != nullptr) { LifeWidget->AddToViewport(); }
 	}
 }

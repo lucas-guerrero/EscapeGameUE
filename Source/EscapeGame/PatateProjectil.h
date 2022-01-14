@@ -39,6 +39,12 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnywhere, category = Sound)
+	class USoundBase* BounceSound;
+
+	UPROPERTY(EditAnywhere, category = Sound)
+	class USoundAttenuation* BounceAttenuation;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

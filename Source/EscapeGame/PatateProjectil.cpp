@@ -8,6 +8,7 @@
 #include <Components/SphereComponent.h>
 #include <EscapeGame/EscapeGameCharacter.h>
 #include <GameFramework/ProjectileMovementComponent.h>
+#include <Kismet/GameplayStatics.h>
 
 // Sets default values
 APatateProjectil::APatateProjectil()
@@ -28,6 +29,11 @@ APatateProjectil::APatateProjectil()
 
 void APatateProjectil::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& hit)
 {
+	if (BounceSound != nullptr && BounceAttenuation != nullptr && NormalImpulse.Size() >500.f)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, BounceSound, GetActorLocation(), 1.f, 1.f, 0.f, BounceAttenuation);
+	}
+
 	AEscapeGameCharacter* Player = Cast<AEscapeGameCharacter>(OtherActor);
 	if (Player != nullptr)
 	{
