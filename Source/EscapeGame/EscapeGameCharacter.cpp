@@ -52,6 +52,8 @@ AEscapeGameCharacter::AEscapeGameCharacter()
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	HealComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health"));
+
+	GetCharacterMovement()->MaxWalkSpeed = 400;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -65,9 +67,11 @@ void AEscapeGameCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 	PlayerInputComponent->BindAxis("MoveForward", this, &AEscapeGameCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AEscapeGameCharacter::MoveRight);
 
-	// handle touch devices
-	PlayerInputComponent->BindTouch(IE_Pressed, this, &AEscapeGameCharacter::TouchStarted);
-	PlayerInputComponent->BindTouch(IE_Released, this, &AEscapeGameCharacter::TouchStopped);
+	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &AEscapeGameCharacter::StartRunning);
+	PlayerInputComponent->BindAction("Run", IE_Released, this, &AEscapeGameCharacter::StopRunning);
+
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 }
 
 
@@ -104,16 +108,6 @@ void AEscapeGameCharacter::OnResetVR()
 	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
 }
 
-void AEscapeGameCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
-{
-		Jump();
-}
-
-void AEscapeGameCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
-{
-		StopJumping();
-}
-
 void AEscapeGameCharacter::TurnAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
@@ -124,6 +118,16 @@ void AEscapeGameCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+}
+
+void AEscapeGameCharacter::StartRunning()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 600;
+}
+
+void AEscapeGameCharacter::StopRunning()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 400;
 }
 
 void AEscapeGameCharacter::MoveForward(float Value)

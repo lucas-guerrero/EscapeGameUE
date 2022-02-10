@@ -21,6 +21,7 @@ class AEscapeGameCharacter : public ACharacter, public IHealInterface
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
+
 public:
 	AEscapeGameCharacter();
 
@@ -58,11 +59,8 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
-	/** Handler for when a touch input begins. */
-	void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
-
-	/** Handler for when a touch input stops. */
-	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
+	void StartRunning();
+	void StopRunning();
 
 protected:
 	// APawn interface
