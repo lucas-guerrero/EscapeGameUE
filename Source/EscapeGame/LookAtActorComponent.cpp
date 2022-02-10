@@ -57,7 +57,5 @@ void ULookAtActorComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	// ...
 
 	bCanSeeActor = LookAtActor();
-
-	if(bCanSeeActor) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Look"));
 }
 

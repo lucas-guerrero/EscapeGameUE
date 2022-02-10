@@ -4,12 +4,12 @@
 #include "EnnemyCharacter.h"
 #include "EscapeFunction.h"
 #include "LookAtActorComponent.h"
+#include "PatateProjectil.h"
 
 #include <TimerManager.h>
 #include <DrawDebugHelpers.h>
 #include <Kismet/KismetMathLibrary.h>
 #include <Kismet/GameplayStatics.h>
-#include "PatateProjectil.h"
 #include <GameFramework/ProjectileMovementComponent.h>
 
 // Sets default values
@@ -31,19 +31,34 @@ void AEnnemyCharacter::BeginPlay()
 	LookAtActorComponent->SetTarget(PlayerCharacter);
 }
 
+void AEnnemyCharacter::ThrowPatateAnim()
+{
+	if (ThrowMontage)
+	{
+		bool bIsMontagePlayed = GetMesh()->GetAnimInstance()->Montage_IsPlaying(ThrowMontage);
+		if (!bIsMontagePlayed)
+		{
+			GetMesh()->GetAnimInstance()->Montage_Play(ThrowMontage, 2.0f);
+		}
+	}
+}
+
 void AEnnemyCharacter::ThrowPatate()
 {
+	
 	if (PatateClass == nullptr) return;
 
 	FVector ForwardVector = GetActorForwardVector();
 	float SpawnDistance = 40.f;
-	FVector SpawnLocation = GetActorLocation() + (ForwardVector * SpawnDistance);
 
-	FTransform SpawnTransform(GetActorRotation(), SpawnLocation);
+	FVector SpawnLocation = GetMesh()->GetSocketLocation(FName("RightHandSocket"));
+	
+	FTransform SpawnTransform(GetActorForwardVector().Rotation(), SpawnLocation);
 	APatateProjectil* Patate = GetWorld()->SpawnActorDeferred<APatateProjectil>(PatateClass, SpawnTransform);
 
 	Patate->GetProjectileMouvementComponent()->InitialSpeed = 2200.f;
 	Patate->FinishSpawning(SpawnTransform);
+	
 }
 
 // Called every frame
@@ -53,13 +68,14 @@ void AEnnemyCharacter::Tick(float DeltaTime)
 	
 	// wheter the enemy could see the player
 	bCanSeePlayer = LookAtActorComponent->CanSeeActor();
-
+	
 	if (bCanSeePlayer != bPreviousCanSeePlayer)
 	{
 		if (bCanSeePlayer)
 		{
+			
 			// Start throwing patate
-			GetWorldTimerManager().SetTimer(ThrowTimerHandle, this, &AEnnemyCharacter::ThrowPatate, ThrowingInterval, true, ThrowDelay);
+			GetWorldTimerManager().SetTimer(ThrowTimerHandle, this, &AEnnemyCharacter::ThrowPatateAnim, ThrowingInterval, true, ThrowDelay);
 		}
 		else
 		{

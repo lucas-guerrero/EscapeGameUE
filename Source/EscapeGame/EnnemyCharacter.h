@@ -26,12 +26,15 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = LookAt, meta = (AllowPrivateAccess = "true"));
 	class ULookAtActorComponent* LookAtActorComponent;
 
+	UPROPERTY(EditAnywhere)
+	class UAnimMontage* ThrowMontage;
+
 	FTimerHandle ThrowTimerHandle;
 
 	float ThrowingInterval = 2.f;
 	float ThrowDelay = 0.5f;
 
-	void ThrowPatate();
+	void ThrowPatateAnim();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -42,4 +45,6 @@ public:
 	// the class used to spawn a patate object
 	UPROPERTY(EditDefaultsOnly, BluePrintReadOnly, Category = Patate)
 	TSubclassOf<class APatateProjectil> PatateClass;
+
+	void ThrowPatate();
 };
